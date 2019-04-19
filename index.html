@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Techno</title>
+    <!-- CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Serif:400,700">
+    <link rel="stylesheet" href="./src/css/style.css">
+    <!-- Vue -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue.min.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <!-- HEADER -->
+      <header class="header">
+        <img class="header__logo" src="./src/images/techno.svg" alt="Techno">
+        <div class="header__menu" @click="carrinhoAtivo = true">
+          {{ carrinhoTotal | numeroPreco }} | {{ carrinho.length }}
+        </div>
+      </header>
+      <!-- PRODUTOS -->
+      <section class="produtos">
+        <div v-for="item in produtos" @click="abrirModal(item.id)" :key="item.id" class="produto">
+          <img class="produto__image" :src="item.img" :alt="item.nome">
+          <div class="produto__info">
+            <span class="produto__info__price">{{ item.preco | numeroPreco }}</span>
+            <h2 class="produto__info__title">{{ item.nome }}</h2>
+          </div>
+        </div>
+      </section>
+      <!-- MODAL -->
+      <section class="modal" v-if="produto" @click="fecharModal">
+        <div class="modal__container">
+          <button class="modal__close" @click="produto = false">&times;</button>
+          <img class="modal__image" :src="produto.img" alt="produto.nome">
+          <div class="modal__info">
+            <span class="modal__info__price">{{ produto.preco | numeroPreco }}</span>
+            <h2 class="modal__info__title">{{ produto.nome }}</h2>
+            <p class="modal__info__description">{{ produto.descricao }}</p>
+            <button v-if="produto.estoque > 0" class="modal__button" @click="adicionarItem">Adicionar item</button>
+            <button v-else class="modal__button" disabled>Produto esgotado</button>
+          </div>
+          <div class="modal__reviews">
+            <h2 class="modal__reviews__title">Avaliações</h2>
+            <ul class="modal__reviews__list">
+              <li class="modal__review" v-for="review in produto.reviews">
+                <p class="modal__review__description">{{ review.descricao }}</p>
+                <p class="modal__review__user">{{ review.nome }} | {{ review.estrelas }} estrelas</p>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+      <!-- CARRINHO MODAL -->
+      <section class="carrinho__modal" :class="{'is-active': carrinhoAtivo}" @click="clickForaCarrinho">
+        <div class="carrinho__modal__container">
+          <button class="carrinho__modal__close" @click="carrinhoAtivo = false">&times;</button>
+          <h2 class="carrinho__modal__title">Carrinho</h2>
+          <div v-if="carrinho.length > 0" class="carrinho__modal__products">
+            <ul class="carrinho__list">
+              <li class="carrinho__list__item" v-for="(item, index) in carrinho">
+                <p>{{ item.nome }}</p>
+                <p class="carrinho__price">{{ item.preco | numeroPreco }}</p>
+                <button class="carrinho__remove" @click="removerItem(index)">&times;</button>
+              </li>
+            </ul>
+            <p class="carrinho__modal__total">{{ carrinhoTotal | numeroPreco }}</p>
+            <button class="carrinho__complete">Finalizar compra</button>
+          </div>
+          <p v-else>O carrinho está vazio.</p>
+        </div>
+      </section>
+      <!-- ALERTA -->
+      <div class="alerta" :class="{'is-active': alertaAtivo}">
+        <p class="alerta__text">{{ mensagemAlerta }}</p>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/axios@0.18.0/dist/axios.min.js"></script>
+    <script src="./src/js/app.js"></script>
+  </body>
+</html>
